@@ -12,34 +12,52 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
+import { orderBy } from "firebase/firestore";
+import { AiOutlineClose } from "react-icons/ai";
+
 const Search = () => {
   const [username, setUsername] = useState("");
-  const [user, setUser] = useState(null);
+  const [users, setUsers] = useState(null);
   const [err, setErr] = useState(false);
 
   const { currentUser } = useContext(AuthContext);
 
-  const handleSearch = async () => {
-    const q = query(
-      collection(db, "users"),
-      where("displayName", "==", username)
-    );
+  const handleSearch = async (searchTerm) => {
+    const q = query(collection(db, "users"), orderBy("displayName"));
 
     try {
       const querySnapshot = await getDocs(q);
+      const users = [];
       querySnapshot.forEach((doc) => {
-        setUser(doc.data());
+        const userData = doc.data();
+        if (
+          userData.displayName.toLowerCase().includes(searchTerm.toLowerCase())
+        ) {
+          users.push(userData);
+        }
       });
+      setUsers(users);
     } catch (err) {
       setErr(true);
+      toast.error("An error occurred while searching for users");
     }
   };
 
-  const handleKey = (e) => {
-    e.code === "Enter" && handleSearch();
+  const [hideSearch, setHideSearch] = useState(false);
+
+  const handleInput = (e) => {
+    setHideSearch(false);
+    const searchTerm = e.target.value.trim();
+    if (!searchTerm) {
+      return;
+    } else {
+      handleSearch(searchTerm);
+    }
   };
 
-  const handleSelect = async () => {
+  const handleSelect = async (user) => {
+    setHideSearch(true);
     //check whether the group(chats in firestore) exists, if not create
     const combinedId =
       currentUser.uid > user.uid
@@ -73,28 +91,37 @@ const Search = () => {
       }
     } catch (err) {}
 
-    setUser(null);
-    setUsername("")
+    // setUser(null);
+    setUsername("");
   };
+
   return (
     <div className="search">
       <div className="searchForm">
-        <input
-          type="text"
-          placeholder="Find a user"
-          onKeyDown={handleKey}
-          onChange={(e) => setUsername(e.target.value)}
-          value={username}
-        />
-      </div>
-      {err && <span>User not found!</span>}
-      {user && (
-        <div className="userChat" onClick={handleSelect}>
-          <img src={user.photoURL} alt="" />
-          <div className="userChatInfo">
-            <span>{user.displayName}</span>
-          </div>
+        <div className="flex justify-between bg-zinc-700 p-[8px] rounded-md">
+          <input type="text" onInput={handleInput} placeholder="Search User" />
+          <AiOutlineClose
+            className="text-2xl text-white"
+            onClick={() => setHideSearch(true)}
+          />
         </div>
+      </div>
+      {/* {!hideSearch && <span>User not found!</span>} */}
+      {!hideSearch && (
+        <>
+          {users?.map((user) => (
+            <div
+              className="userChat"
+              key={user.uid}
+              onClick={() => handleSelect(user)}
+            >
+              <img src={user.photoURL} alt="" />
+              <div className="userChatInfo">
+                <span>{user.displayName}</span>
+              </div>
+            </div>
+          ))}
+        </>
       )}
     </div>
   );

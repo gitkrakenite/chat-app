@@ -7,6 +7,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { useNavigate, Link } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Spinner from "../components/Spinner";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const [err, setErr] = useState(false);
@@ -23,6 +24,7 @@ const Register = () => {
     const file = e.target[3].files[0];
 
     try {
+      setLoading(true);
       //Create user
       const res = await createUserWithEmailAndPassword(auth, email, password);
 
@@ -48,16 +50,17 @@ const Register = () => {
 
             //create empty user chats on firestore
             await setDoc(doc(db, "userChats", res.user.uid), {});
+            setLoading(false);
             navigate("/");
           } catch (err) {
             console.log(err);
-            setErr(true);
+            toast.error("Could not set Up Your Account. Contact Admin");
             setLoading(false);
           }
         });
       });
     } catch (err) {
-      setErr(true);
+      toast.error("Network Error");
       setLoading(false);
     }
   };
@@ -141,19 +144,25 @@ const Register = () => {
                   Choose chat profile pic
                 </span>
                 <span className="text-zinc-200 text-sm">
-                  The Click Set Up Account
+                  Then Click Set Up Account
                 </span>
               </div>
             </label>
           </div>
 
           <div className="w-full">
-            <button
-              disabled={loading}
-              className="bg-emerald-700 w-full p-[10px] rounded-lg mb-[20px] text-zinc-300 hover:text-zinc-100"
-            >
-              Set Up Chat Account
-            </button>
+            {loading ? (
+              <div className="text-white my-[10px]">
+                <Spinner message="setting up chat account" className="" />
+              </div>
+            ) : (
+              <button
+                disabled={loading}
+                className="bg-emerald-700 w-full p-[10px] rounded-lg mb-[20px] text-zinc-300 hover:text-zinc-100"
+              >
+                Set Up Chat Account
+              </button>
+            )}
           </div>
 
           {loading && (
@@ -180,6 +189,24 @@ const Register = () => {
           <Link to="/login" className="text-emerald-600 underline">
             click here
           </Link>
+        </p>
+        <p className="text-zinc-300 mt-[10px]">
+          Back To Browse More People ?{" "}
+          <a
+            href="https://chirpy-clique-bcb31.web.app/"
+            className="text-emerald-600 underline"
+          >
+            Back ?
+          </a>
+        </p>
+        <p className="mt-[10px] text-zinc-300">
+          Is there An issue ?{" "}
+          <a
+            href="mailto:daysseller@gmail.com"
+            className="text-emerald-600 underline"
+          >
+            Mail Admin
+          </a>{" "}
         </p>
       </div>
     </div>

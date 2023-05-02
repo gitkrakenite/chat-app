@@ -3,10 +3,13 @@ import { useNavigate, Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { toast } from "react-toastify";
+import Spinner from "../components/Spinner";
 
 const Login = () => {
   const [err, setErr] = useState(false);
   const [showPass, setShowPass] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -15,10 +18,14 @@ const Login = () => {
     const password = e.target[1].value;
 
     try {
+      setLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
+      setLoading(false);
+      toast.success("successful login");
       navigate("/");
     } catch (err) {
-      setErr(true);
+      toast.error("invalid credentials or network error");
+      setLoading(false);
     }
   };
   return (
@@ -80,9 +87,16 @@ const Login = () => {
             </div>
           </div>
 
-          <button className="bg-emerald-700 w-full p-[10px] rounded-lg mb-[20px] text-zinc-300 hover:text-zinc-100">
-            Proceed To Chat
-          </button>
+          {loading ? (
+            <div className="text-white my-[10px]">
+              <Spinner message="Signing You in" className="" />
+            </div>
+          ) : (
+            <button className="bg-emerald-700 w-full p-[10px] rounded-lg mb-[20px] text-zinc-300 hover:text-zinc-100">
+              Proceed To Chat
+            </button>
+          )}
+
           {/* {err && <span>Something went wrong</span>} */}
         </form>
         <p className="text-zinc-300">
@@ -90,6 +104,24 @@ const Login = () => {
           <Link to="/register" className="text-emerald-600 underline">
             Set Up
           </Link>
+        </p>
+        <p className="text-zinc-300 mt-[10px]">
+          Back To Browse More People ?{" "}
+          <a
+            href="https://chirpy-clique-bcb31.web.app/"
+            className="text-emerald-600 underline"
+          >
+            Back ?
+          </a>
+        </p>
+        <p className="mt-[10px] text-zinc-300">
+          Is there An issue ?{" "}
+          <a
+            href="mailto:daysseller@gmail.com"
+            className="text-emerald-600 underline"
+          >
+            Mail Admin
+          </a>{" "}
         </p>
       </div>
     </div>

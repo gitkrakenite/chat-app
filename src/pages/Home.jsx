@@ -16,7 +16,7 @@ const Home = () => {
 
         {/* mobile sidebar */}
         {closeSide == false && (
-          <div className="flex-1 absolute lg:hidden top-12 left-0 bg-zinc-900 z-[999] w-full h-[100vh]">
+          <div className="flex-1 absolute lg:hidden top-12 left-0 bg-zinc-900 z-[999] w-full h-[100vh] overflow-y-scroll">
             <Sidebar />
           </div>
         )}

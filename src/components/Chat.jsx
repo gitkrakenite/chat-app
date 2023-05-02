@@ -27,7 +27,7 @@ const Chat = () => {
           {data.user.displayName && "Your Chat with " + data.user?.displayName}
         </span>
         <div className="flex items-center gap-[40px]">
-          <a href="#" title="Back Home">
+          <a href="https://chirpy-clique-bcb31.web.app" title="Back Home">
             <AiOutlineHome className="text-2xl text-zinc-300" />
           </a>
 
