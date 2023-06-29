@@ -17,11 +17,11 @@ const Navbar = () => {
       <span className=" hidden text-lg xl:block">chirpyclique</span>
       <div className="flex items-center gap-[8px] md:gap-[20px]">
         <img
-          src={currentUser.photoURL}
+          src={currentUser?.photoURL}
           alt=""
           className="w-[40px] h-[40px] rounded-full object-cover"
         />
-        <span>{currentUser.displayName}</span>
+        <span>{currentUser?.displayName}</span>
         <button
           onClick={handleLogout}
           className="bg-emerald-600 p-[5px] rounded-md"

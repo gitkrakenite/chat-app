@@ -66,7 +66,7 @@ const Register = () => {
   };
 
   return (
-    <div className="h-[100vh] w-full flex bg-zinc-800 justify-center items-center ">
+    <div className="h-[100vh] overflow-y-scroll prompt w-full flex bg-zinc-800 justify-center items-center ">
       <div className=" w-[96%] lg:w-[50%] 2xl:w-[35%] m-auto ">
         <div className="flex flex-col gap-[10px] mb-[1em]">
           <span className="text-zinc-200 text-2xl" style={{ fontWeight: 600 }}>
